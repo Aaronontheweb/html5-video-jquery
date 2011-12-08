@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "Channel 9 //BUILD Playlist";
+}
+<script language="javascript" type="text/javascript">
+
+    var playlist = {
+        "videos": [
+            { "title": "BUILD Keynote #1", "poster": "http://files.channel9.msdn.com/thumbnail/be0d5d71-3ff1-4fcc-bb6f-c146778a98e6.png", "source": "http://video.ch9.ms/build/2011/key01/BUILD2011KeynoteDay1_low_ch9.mp4" },
+            { "title": "BUILD Keynote #2", "poster": "http://files.channel9.msdn.com/thumbnail/2e40b4ce-97fa-4a66-8295-602a7e80ec6b.png", "source": "http://media.ch9.ms/ch9/8149/f431ccf1-024f-4e6f-8a91-9f5e01118149/BUILD2011KEY02_low_ch9.mp4" }
+        ]
+    };
+
+    //The current position of the video (timescale)
+    var currentPosition = 0;
+
+    //The currently playing video
+    var videoSelection = 0;
+
+    //Load all of the meta data necessary to play the video
+    function loadVideo(video) {
+        $('#videoTitle').text(video.title);
+        $('#videoPlayer').attr("poster", video.poster);
+        $('#videoPlayer').attr("src", video.source);
+        //$('#videoPlayer').attr("src", video.source).get(0).play();
+    }
+
+    $(document).ready(function () {
+
+        var player = $('#videoPlayer');
+
+        player.bind({
+            canplay: function () {
+                $('#videoPlayer').play();
+            },
+            loadstart: function () {
+                alert("LOADING");
+            },
+            playing: function () {
+                alert("Omg it's playing!");
+            },
+            ended: function () {
+                if (currentPosition + 1 >= playlist.videos.length()) { //time to roll over the playlist
+                    currentPosition = 0;
+                }
+                else { //Otherwise, increment the playlist
+                    currentPosition++;
+                }
+                loadVideo(playlist.videos[videoSelection]);
+            }
+        });
+
+        //Play the current video selection
+        loadVideo(playlist.videos[videoSelection]);
+    });
+</script>
+<h2>
+    Channel 9 //BUILD Playlist</h2>
+<div>
+    <h3 id="videoTitle">
+    </h3>
+    <video id="videoPlayer" poster="" width="480" height="272">
+    </video>
+    <div style="clear:both;">
+        <div width="240" float="left">
+            <span id="timeRemaining"></span>
+        </div>
+        <div>
+            <span id="duration"></span>
+        </div>
+    </div>
+</div>

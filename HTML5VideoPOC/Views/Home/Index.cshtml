@@ -16,36 +16,54 @@
     //The currently playing video
     var videoSelection = 0;
 
+    //The time between key frames in ms
+    var frameInterval = 1000;
+
+    //The timer handle
+    var intervalHandle;
+
     //Load all of the meta data necessary to play the video
     function loadVideo(video) {
         $('#videoTitle').text(video.title);
         $('#videoPlayer').attr("poster", video.poster);
         $('#videoPlayer').attr("src", video.source);
-        //$('#duration').text($('#videoPlayer').attr("duration"));
-        //$('#videoPlayer').attr("src", video.source).get(0).play();
+    }
+  
+    function updateCurrentPosition() {
+        $('#timeRemaining').text(document.getElementById("videoPlayer").currentTime);
     }
 
     $(document).ready(function () {
 
         var player = $('#videoPlayer');
+        var domPlayer = document.getElementById("videoPlayer");
+
 
         player.bind({
             canplay: function () {
-                alert("OMG WE CAN PLAY IT");
-                document.getElementById("videoPlayer").play();
+                domPlayer.play();
+                $('#duration').text(domPlayer.duration);
             },
             loadstart: function () {
-                alert("LOADING");
+                //Display some loading animation
+            },
+            loadeddata: function () {
+                //Compelte loading animation
             },
             playing: function () {
-                alert("Omg it's playing!");
+                //Set the timer for ticking down the amount of seconds transpired thus far
+                intervalHandle = setInterval(updateCurrentPosition, frameInterval);
             },
             ended: function () {
-                if (currentPosition + 1 > playlist.videos.length()) { //time to roll over the playlist
-                    currentPosition = 0;
+                //Stop the timer
+                clearInterval(intervalHandle);
+
+                //Display some animation indicating that the next sequence is about to begin...
+                if (videoSelection + 1 > playlist.videos.length) { //time to roll over the playlist
+                    videoSelection = 0;
                 }
                 else { //Otherwise, increment the playlist
-                    currentPosition++;
+                    videoSelection++;
                 }
                 loadVideo(playlist.videos[videoSelection]);
             }

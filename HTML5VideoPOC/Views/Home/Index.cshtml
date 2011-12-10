@@ -21,6 +21,7 @@
         $('#videoTitle').text(video.title);
         $('#videoPlayer').attr("poster", video.poster);
         $('#videoPlayer').attr("src", video.source);
+        //$('#duration').text($('#videoPlayer').attr("duration"));
         //$('#videoPlayer').attr("src", video.source).get(0).play();
     }
 
@@ -30,7 +31,8 @@
 
         player.bind({
             canplay: function () {
-                $('#videoPlayer').play();
+                alert("OMG WE CAN PLAY IT");
+                document.getElementById("videoPlayer").play();
             },
             loadstart: function () {
                 alert("LOADING");
@@ -39,7 +41,7 @@
                 alert("Omg it's playing!");
             },
             ended: function () {
-                if (currentPosition + 1 >= playlist.videos.length()) { //time to roll over the playlist
+                if (currentPosition + 1 > playlist.videos.length()) { //time to roll over the playlist
                     currentPosition = 0;
                 }
                 else { //Otherwise, increment the playlist

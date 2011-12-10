@@ -28,7 +28,28 @@
         $('#videoPlayer').attr("poster", video.poster);
         $('#videoPlayer').attr("src", video.source);
     }
-  
+    
+    //Build the playlist
+    function buildPlayList(videos) {
+        var e = $('#playList');
+        e.remove(":contains('li')"); //Remove all of the current items from the list
+
+        var i = 0;
+        var playlistItem = videoSelection;
+
+        for (i = 0; i < videos.length; i++) {
+            var currentVideo = videos[playlistItem];
+            e.append('<li><p>' + currentVideo.title + '</p><img style="width:105px;height:60px;" src="' + currentVideo.poster + '" alt="' + currentVideo.title + '"/></li>');
+            
+            if (playlistItem + 1 > videos.length) { //time to roll over the playlist
+                playlistItem = 0;
+            }
+            else { //Otherwise, increment the playlist
+                playlistItem++;
+            }
+        }
+    }
+
     function updateCurrentPosition() {
         $('#timeRemaining').text(document.getElementById("videoPlayer").currentTime);
     }
@@ -66,26 +87,35 @@
                     videoSelection++;
                 }
                 loadVideo(playlist.videos[videoSelection]);
+                buildPlayList(playlist.videos);
             }
         });
 
         //Play the current video selection
         loadVideo(playlist.videos[videoSelection]);
+        buildPlayList(playlist.videos);
     });
 </script>
 <h2>
     Channel 9 //BUILD Playlist</h2>
-<div>
+<div style="width:700px;">
     <h3 id="videoTitle">
     </h3>
-    <video id="videoPlayer" poster="" width="480" height="272">
-    </video>
-    <div style="clear:both;">
-        <div width="240" float="left">
-            <span id="timeRemaining"></span>
-        </div>
-        <div>
-            <span id="duration"></span>
+     <div style="float:right; width: 200px;" >
+        <ol id="playList">
+        </ol>
+    </div>
+    <div style="width: 480px; margin-left: 10px; margin-right: 10px;">
+        <video id="videoPlayer" poster="" width="480" height="272">
+        </video>
+        <div style="clear: both;">
+            <div width="240" float="left">
+                <span id="timeRemaining"></span>
+            </div>
+            <div>
+                <span id="duration"></span>
+            </div>
         </div>
     </div>
+   
 </div>

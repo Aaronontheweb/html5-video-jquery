@@ -32,7 +32,7 @@
     //Build the playlist
     function buildPlayList(videos) {
         var e = $('#playList');
-        e.remove(":contains('li')"); //Remove all of the current items from the list
+        $('li',e).remove(); //Remove all of the current items from the list
 
         var i = 0;
         var playlistItem = videoSelection;
@@ -40,18 +40,36 @@
         for (i = 0; i < videos.length; i++) {
             var currentVideo = videos[playlistItem];
             e.append('<li><p>' + currentVideo.title + '</p><img style="width:105px;height:60px;" src="' + currentVideo.poster + '" alt="' + currentVideo.title + '"/></li>');
-            
-            if (playlistItem + 1 > videos.length) { //time to roll over the playlist
-                playlistItem = 0;
-            }
-            else { //Otherwise, increment the playlist
-                playlistItem++;
-            }
+
+            playlistItem = nextListPosition(playlistItem, videos);
         }
     }
 
     function updateCurrentPosition() {
         $('#timeRemaining').text(document.getElementById("videoPlayer").currentTime);
+    }
+    
+    //Function used for intelligently incrementing the count on the video playlist
+    function nextListPosition(currentPosition, videoList) {
+        //Display some animation indicating that the next sequence is about to begin...
+        if (currentPosition + 1 >= videoList.length) { //time to roll over the playlist
+            currentPosition = 0;
+        }
+        else { //Otherwise, increment the playlist
+            currentPosition++;
+        }
+
+        return currentPosition;
+    }
+    
+    function nextVideo() {
+        //Stop the timer
+        clearInterval(intervalHandle);
+
+        videoSelection = nextListPosition(videoSelection, playlist.videos);
+        
+        loadVideo(playlist.videos[videoSelection]);
+        buildPlayList(playlist.videos);
     }
 
     $(document).ready(function () {
@@ -59,6 +77,7 @@
         var player = $('#videoPlayer');
         var domPlayer = document.getElementById("videoPlayer");
 
+        $('#buttonSkip').bind("click", function () { nextVideo(); });
 
         player.bind({
             canplay: function () {
@@ -76,18 +95,7 @@
                 intervalHandle = setInterval(updateCurrentPosition, frameInterval);
             },
             ended: function () {
-                //Stop the timer
-                clearInterval(intervalHandle);
-
-                //Display some animation indicating that the next sequence is about to begin...
-                if (videoSelection + 1 > playlist.videos.length) { //time to roll over the playlist
-                    videoSelection = 0;
-                }
-                else { //Otherwise, increment the playlist
-                    videoSelection++;
-                }
-                loadVideo(playlist.videos[videoSelection]);
-                buildPlayList(playlist.videos);
+                nextVideo();
             }
         });
 
@@ -108,8 +116,8 @@
     <div style="width: 480px; margin-left: 10px; margin-right: 10px;">
         <video id="videoPlayer" poster="" width="480" height="272">
         </video>
-        <div style="clear: both;">
-            <div width="240" float="left">
+        <div style="clear: both;width:480px;">
+            <div style="width:240px;float:left">
                 <span id="timeRemaining"></span>
             </div>
             <div>
@@ -117,5 +125,7 @@
             </div>
         </div>
     </div>
-   
+    <div>
+        <button title="skip" id="buttonSkip">Skip</button>
+    </div>
 </div>

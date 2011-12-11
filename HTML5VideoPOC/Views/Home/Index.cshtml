@@ -81,16 +81,28 @@
 
         player.bind({
             canplay: function () {
+                $('#loadStatus').text("Starting...");
                 domPlayer.play();
                 $('#duration').text(domPlayer.duration);
             },
             loadstart: function () {
                 //Display some loading animation
+                $('#loadStatus').text("Loading...");
             },
             loadeddata: function () {
-                //Compelte loading animation
+                //Complete loading animation
+                $('#loadStatus').text("Loaded!");
+            },
+            error: function () {
+                //Complete loading animation
+                $('#loadStatus').text("Error loading video :(");
+            },
+            stalled: function() {
+                //Complete loading animation
+                $('#loadStatus').text("Video download progress stalled :( - skipping video... ");
             },
             playing: function () {
+                $('#loadStatus').text("Now playing.");
                 //Set the timer for ticking down the amount of seconds transpired thus far
                 intervalHandle = setInterval(updateCurrentPosition, frameInterval);
             },
@@ -116,6 +128,7 @@
     <div style="width: 480px; margin-left: 10px; margin-right: 10px;">
         <video id="videoPlayer" poster="" width="480" height="272">
         </video>
+        <span id="loadStatus"></span>
         <div style="clear: both;width:480px;">
             <div style="width:240px;float:left">
                 <span id="timeRemaining"></span>
